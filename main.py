@@ -29,8 +29,7 @@ def solve(grid: np.array):
         return True
 
     # Loop over the unsolved indexes
-    for i, row in enumerate(rows):
-        col = columns[i]
+    for row, col in zip(rows, columns):
         for n in range(1, 10):
 
             # Check if solution is possible
