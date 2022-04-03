@@ -3,7 +3,7 @@ import time
 import numba
 
 
-@numba.jit()
+@numba.jit(nopython=True)
 def check(puzzle: np.array, rowNum: int, columnNum: int, n: int):
     # Row element is in
     r = puzzle[rowNum, :]
@@ -19,7 +19,7 @@ def check(puzzle: np.array, rowNum: int, columnNum: int, n: int):
     return np.sum(r == n) == 0 and np.sum(c == n) == 0 and np.sum(s == n) == 0
 
 
-@numba.jit()
+@numba.jit(nopython=True)
 def solve(grid: np.array):
     # Get the indexes of the unsolved elements
     rows, columns = np.where(grid == 0)
@@ -29,26 +29,26 @@ def solve(grid: np.array):
         return True
 
     # Loop over the unsolved indexes
-    for row in rows:
-        for col in columns:
-            for n in range(1, 10):
+    for i, row in enumerate(rows):
+        col = columns[i]
+        for n in range(1, 10):
 
-                # Check if solution is possible
-                if check(grid, row, col, n):
+            # Check if solution is possible
+            if check(grid, row, col, n):
 
-                    # Assign element to posible solution
-                    grid[row, col] = n
+                # Assign element to posible solution
+                grid[row, col] = n
 
-                    # Reqursive call
-                    if solve(grid):
-                        return True
+                # Reqursive call
+                if solve(grid):
+                    return True
 
-                    # if solution is later shown to be not possible,
-                    # set element back to 0
-                    grid[row, col] = 0
+                # if solution is later shown to be not possible,
+                # set element back to 0
+                grid[row, col] = 0
 
-            # If none of the solutions were possible, returns false
-            return False
+        # If none of the solutions were possible, returns false
+        return False
 
 
 puzzle = np.array([
